@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atguigu.dao.SetmealDao">
+
+    <insert id="add" parameterType="setmeal" useGeneratedKeys="true" keyProperty="id">
+        insert into t_setmeal(name,  code,  helpCode,  sex,  age,  price,  remark,  attention,  img)
+        values(#{name}, #{code}, #{helpCode}, #{sex}, #{age}, #{price}, #{remark}, #{attention}, #{img})
+    </insert>
+
+    <insert id="addSetmealAndTravelGroup" parameterType="map" >
+        insert into t_setmeal_travelgroup(setmeal_id,travelgroup_id) values(#{setmealId},#{travelgroupId})
+    </insert>
+
+    <select id="findPage" parameterType="string" resultType="com.atguigu.pojo.Setmeal">
+        select * from t_setmeal
+        <where>
+            <if test="value!=null and value.length>0">
+                code=#{value} or name like concat("%",#{value},"%") or helpCode=#{value}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllSetmeal" resultType="com.atguigu.pojo.Setmeal">
+        select * from t_setmeal
+    </select>
+
+    <resultMap id="setmealResult" type="setmeal">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+       <result column="code" property="code"></result>
+       <result column="helpCode" property="helpCode"></result>
+       <result column="sex" property="sex"></result>
+       <result column="age" property="age"></result>
+       <result column="price" property="price"></result>
+       <result column="remark" property="remark"></result>
+       <result column="attention" property="attention"></result>
+       <result column="img" property="img"></result>
+       <collection column="id" property="travelGroups" select="com.atguigu.dao.TravelGroupDao.findTravelGroupsById"></collection>
+    </resultMap>
+
+    <select id="findSetmealById" parameterType="int" resultMap="setmealResult">
+        select * from t_setmeal where id = #{id}
+    </select>
+
+
+
+    <select id="getSetmealById" parameterType="int" resultType="setmeal">
+        select * from t_setmeal where id = #{id}
+    </select>
+</mapper>
